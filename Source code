@@ -1,0 +1,32 @@
+# Install PyDrive using pip if you haven't already
+# pip install PyDrive
+
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+
+def upload_to_drive(file_path):
+    # Authenticate and create the PyDrive client
+    gauth = GoogleAuth()
+    gauth.LocalWebserverAuth()  # Creates local webserver and automatically handles authentication
+    drive = GoogleDrive(gauth)
+
+    # Upload a file
+    file = drive.CreateFile({'title': file_path.split('/')[-1]})
+    file.SetContentFile(file_path)
+    file.Upload()  # Upload the file.
+
+    # Get file sharing link
+    file.InsertPermission({
+        'type': 'anyone',
+        'value': 'anyone',
+        'role': 'reader'
+    })
+    print(f"Uploaded file '{file['title']}' and shared it with the link: {file['alternateLink']}")
+    
+if __name__ == "__main__":
+    # Replace with the path of the file you want to upload
+    file_path = "path_to_your_file.txt"  
+    upload_to_drive(file_path)
+# expected output 
+
+# Uploaded file 'yourfile.txt' and shared it with the link: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
